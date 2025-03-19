@@ -81,6 +81,19 @@ int main(int argc, char** argv)
   {
     config_path = path;
   }
+#elif ROS2_FOUND
+  {
+    // This node is only used for parameter parsing
+    auto nh = std::make_shared<rclcpp::Node>("hesai_lidar");
+    nh->declare_parameter("config_path", rclcpp::PARAMETER_STRING);
+    std::string path {};
+    if (nh->get_parameter("config_path", path)) {
+      config_path = path;
+    } else {
+      RCLCPP_WARN_STREAM(nh->get_logger(), "Failed to get parameter 'config_path', defaulting to '" <<
+                         config_path << "'!");
+    }
+  }
 #endif
 
   YAML::Node config;
